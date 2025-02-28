@@ -30,26 +30,26 @@ begin
     else    begin
         case(state)
         IDLE:   begin
-            if(prev_req || req) begin
+            if((prev_req || req)!=0) begin
                 state <= ACK;
                 prev_req <= prev_req | req;
             end
         end
         ACK:    begin
                 state <= WAIT_DONE;
-                prev_req <= (prev_req & (~ack)) | req;
+                prev_req <= (prev_req & (~ack)) | req;//remove the last priority and mask
         end
         WAIT_DONE:  begin
+            prev_req <= (prev_req & ~ack) | req;//remove the last priority and mask
             if(done)    begin
-                state <= IDLE;
-                prev_req <= prev_req | req;
+                state <= IDLE; 
             end
             else if(prev_req!=0)    begin
                 state <= ACK;
-                prev_req <= prev_req | req;
             end
         end
         default:    begin
+            state <= IDLE;
         end
         endcase
     end
@@ -62,23 +62,23 @@ begin
         irq <= 0;
     end
     else    begin
-        if(state == IDLE && (prev_req || req))   begin
-            ack <= 1'b1 << code;
-            irq <= valid;
+        if(state == IDLE)   begin
+            ack <= 1'b0;
+            irq <= 1'b0;
         end
-        else if(state==ACK) begin
-            ack <= ack;
-            irq <= irq;
+        else if(state == ACK && ((prev_req || req) !=0)) begin
+            ack <= 1'b1<<code;
+            irq <= valid;
         end
         else if(state==WAIT_DONE)   begin
             if(done)    begin
                 ack <= 0;
                 irq <= 0;
             end
-            else if(prev_req !=0)   begin
-                ack <= 1'b1 << code;
-                irq <= valid;
-            end
+        end
+        else    begin
+                ack <= 0;
+                irq <= 0;
         end
     end
 end
