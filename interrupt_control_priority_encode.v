@@ -42,7 +42,7 @@ begin
         WAIT_DONE:  begin
             prev_req <= (prev_req & ~ack) | req;//remove the last priority and mask
             if(done)    begin
-                state <= IDLE; 
+                state <= IDLE; //if done comes into picture, always take the new set of reqs, and ignore older set
             end
             else if(prev_req!=0)    begin
                 state <= ACK;
