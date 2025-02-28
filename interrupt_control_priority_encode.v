@@ -82,7 +82,7 @@ begin
                     state <= IDLE;//if done, go to idle state
                 end
                 else if(prev_req!=0)   begin
-                    state <= ACK;//if req are pending and not rcvd done yet then go to ACk state to process next req
+                  state <= ACK;//if req are pending and not rcvd done yet then go to ACk state to process next pending req
                 end
             end
         default:    begin
