@@ -30,9 +30,9 @@ begin
     else    begin
         case(state)
         IDLE:   begin
-            if((prev_req || req)!=0) begin
+            if(req!=0) begin
                 state <= ACK;
-                prev_req <= prev_req | req;
+                prev_req <= req;
             end
         end
         ACK:    begin
