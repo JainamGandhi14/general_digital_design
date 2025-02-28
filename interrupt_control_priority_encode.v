@@ -1,16 +1,17 @@
 `timescale 1ns / 1ps
-module interrupt_control_priority_encode(
+module interrupt_control_priority_encode #(parameter No_IP = 4)(
   input        clk,
   input        reset_n,
-  input  [3:0] req,
+  input  [No_IP-1:0] req,
   input        done,
-  output reg [3:0] ack,
+  output reg [No_IP-1:0] ack,
   output reg       irq
     );
-
-wire [1:0] code;
+  
+  parameter bit_req = $clog2(No_IP);
+  wire [bit_req-1:0] code;
 wire valid;
-reg [3:0] prev_req; //will be needed to process the previous requests when waiting if no high priority new request is asserted
+  reg [No_IP-1:0] prev_req; //will be needed to process the previous requests when waiting if no high priority new request is asserted
 reg [2:0] state; //using one-hot encoding
 localparam IDLE = 3'b001,
            ACK = 3'b010,
@@ -19,12 +20,12 @@ priority_encoder encode(.enable(1'b1),.req(prev_req),.code(code),.valid(valid));
 
 
 //prev req -- because of using 1 extra reg to capture and manipulate input, some input req depending 
-//on the current state,needs to stable for either 1 clock cycle or 2 clock cycle to be correctly captured
+//on the current state, if current state == ACK, then the captured latency is 1 clock cyc;e
 
 always@(posedge clk, negedge reset_n)
 begin
     if(~reset_n)    begin
-        prev_req <= 4'b0;
+        prev_req <= 0;
     end
     else    begin
         if(state==IDLE && req !=0)  begin
@@ -43,20 +44,20 @@ end
 always@(posedge clk, negedge reset_n)
 begin
     if(~reset_n)    begin
-        ack <= 4'b0;
+        ack <= 0;
     end
     else    begin
         if(state==IDLE)  begin
-            ack <= 4'b0;
+            ack <= 0;
             irq <= 0;
         end
         else if(state==ACK)   begin
-            ack <= 4'b0001 << code; 
+            ack <= 1'b1 << code; 
             irq <= valid;
         end
         else if(state==WAIT_DONE)   begin
-            ack<=4'b0;
-            irq<=1'b0;
+            ack<=0;
+            irq<=0;
         end
     end
 end
@@ -94,13 +95,13 @@ end
 
 endmodule
 
-module priority_encoder (
+module priority_encoder #(parameter No_IP = 4)(
   input        enable,
-  input  [3:0] req,
-  output reg [1:0] code,
+  input  [No_IP-1:0] req,
+  output reg [bit_req-1:0] code,
   output       valid
 );
-
+  parameter bit_req = $clog2(No_IP);
 reg [2:0] i; //to maintain the priority - easy to scale
 assign valid = (req != 0 ) && enable;
 
@@ -111,7 +112,7 @@ begin
     end
     else    begin
         code = 0;
-        for(i=0;i<4;i=i+1)   begin : WILL_GEN_COMB
+      for(i=0;i<No_IP;i=i+1)   begin : WILL_GEN_COMB
             code = req[i]? i[1:0] : code;
         end
     end
