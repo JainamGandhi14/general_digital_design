@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-module #(parameter NINTR = 4)interrupt_control_priority_encode(
+module interrupt_control_priority_encode #(parameter NINTR = 4)(
   input        clk,
   input        reset_n,
   input  [NINTR-1:0] req,
@@ -8,7 +8,7 @@ module #(parameter NINTR = 4)interrupt_control_priority_encode(
   output reg       irq
     );
   //NINTR is number of interrupts
-  parameter bit_req = $clog2(NINTR);
+  localparam bit_req = $clog2(NINTR);
   wire [bit_req-1:0] code;
 wire valid;
   reg [NINTR-1:0] prev_req; //will be needed to process the previous requests when waiting if no high priority new request is asserted
@@ -85,14 +85,13 @@ end
 
 endmodule
 
-module priority_encoder #(parameter NINTR = 4)(
+module priority_encoder #(parameter NINTR = 4, bit_req = $clog2(NINTR))(
   input        enable,
   input  [NINTR-1:0] req,
   output reg [bit_req-1:0] code,
   output       valid
 );
 
-  parameter bit_req = $clog2(NINTR);
   reg [bit_req:0] i; //to maintain the priority - easy to scale
 assign valid = (req != 0 ) && enable;
 
