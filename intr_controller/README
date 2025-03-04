@@ -1,1 +1,31 @@
-The file here will handle the multiple interrupt requests in a fixed priority manner
+Design an FSM to manage four interrupt requests (req[3:0]) with fixed priority (highest: req[3], lowest: req[0]). The FSM must:
+
+Acknowledge the highest-priority active interrupt and signal the processor via irq.
+
+Wait for the processor to complete servicing the interrupt (via done).
+
+Re-evaluate pending interrupts and repeat.
+
+Specifications:
+Inputs:
+
+req[3:0]: Interrupt requests (active high).
+
+done: Processor completion signal (active high).
+
+clk: Clock.
+
+reset_n: Active-low reset.
+
+Outputs:
+
+ack[3:0]: One-hot acknowledgment for the active interrupt.
+
+irq: Global interrupt request to the processor (active high).
+
+Requirements:
+Prioritize interrupts using a combinational priority encoder (from the previous problem).
+
+Handle overlapping interrupts (e.g., new requests arrive while servicing an interrupt).
+
+Reset to an idle state with all outputs deasserted.
