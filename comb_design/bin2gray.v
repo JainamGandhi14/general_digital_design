@@ -5,5 +5,5 @@ module bin2gray(
     output [3:0] op
     );
     
-    assign op = in ^ {1'b0,in[3:1]};
+    assign op = in ^ in>>1; // easy to scale
 endmodule
