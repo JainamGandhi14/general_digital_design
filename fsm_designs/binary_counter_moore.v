@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-
+//fsm based counter if asked to design with this spec
 module counter_fsm(
     input clk,          // Clock signal
     input rst,          // Reset signal
