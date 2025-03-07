@@ -18,7 +18,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
+//design not so structured, will work on restructuring the design
 //instruction = 16 bits = 7 bit of opcode + 3 + 3 + 3 bits of registers(9 bits for operand)
 //execute memory write instruction will have 2 outputs, data and address, i.e., where to write the data in regbus for cpu
 // implementing 2 instruction: Load R1, {R2] ; ADD R3, R1, R2;
@@ -31,10 +31,8 @@ reg [7:0] ie_reg1_val;//instruction execute: values
 reg [7:0] ie_reg2_val;//instruction execute: values
 reg [7:0] ie_reg3_val;//instruction execute: values
 
-//output wires before registering values
-/*wire [8:0] exec_data;
-wire [2:0] exec_adr;
-wire load;*/
+
+
 //locals
 integer i;
 reg [7:0] main_mem[0:7];//reg memory, just for an example to replicate the write from memory
@@ -140,3 +138,4 @@ begin
     end
 end
 endmodule
+    
