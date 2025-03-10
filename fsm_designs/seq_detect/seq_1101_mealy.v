@@ -29,6 +29,9 @@ module seq_1101_mealy(
     //designing this fsm with different concept than the ones that I have in this directory
     //here, the state modification and outputs is combinatorial ckt while next_state updates are sequential
     //almost similar to all the designs that I have here, just the different structure of the code using blocking and non-blocking efficiently
+    /*with this approach, there will be glitches in the output as the output is unregistered, so, for mealy machine, we can add the register for the output which will delay the output by 1 clock cycle,
+    or using the moore machine with the similar approach woould help with the glitch problem.
+    */
     reg [1:0] state,next_state;
     
     always@(posedge clk, posedge rst)
