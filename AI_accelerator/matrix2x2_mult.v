@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-
+//using 8 multipliers and 4 adders
 module matrix2x2_mult (
     input       clk,
     input       rst,
